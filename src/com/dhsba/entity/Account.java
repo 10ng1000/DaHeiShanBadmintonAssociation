@@ -16,4 +16,14 @@ public class Account implements AccountService {
         this.passWord = passWord;
         this.type = type;
     }
+
+    @Override
+    public void changePassWord(String newPassword) {
+
+    }
+
+    @Override
+    public boolean login(String account, String passWord) {
+        return false;
+    }
 }

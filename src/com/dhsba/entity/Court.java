@@ -17,4 +17,19 @@ public class Court implements CourtService {
         this.number = number;
         this.position = position;
     }
+
+    @Override
+    public void showInfo() {
+
+    }
+
+    @Override
+    public boolean reserveCourt(int number, CourtState futureState) {
+        return false;
+    }
+
+    @Override
+    public void freeCourt(int number) {
+
+    }
 }

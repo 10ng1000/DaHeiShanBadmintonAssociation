@@ -17,11 +17,31 @@ public class Competition implements CompetitionService {
     int registerCount;
     int registerMax;
     ArrayList<Game> games;
-    ArrayList<Athlete> ranking;
+    ArrayList<Athlete> competitors;
 
     public Competition(AthleteCategory type, Date startTime, int registerMax) {
         this.type = type;
         this.startTime = startTime;
         this.registerMax = registerMax;
+    }
+
+    @Override
+    public void showInfo() {
+
+    }
+
+    @Override
+    public void arrangeGames() {
+
+    }
+
+    @Override
+    public void modifyCompetitorNumber(int number) {
+
+    }
+
+    @Override
+    public void endCompetition() {
+
     }
 }

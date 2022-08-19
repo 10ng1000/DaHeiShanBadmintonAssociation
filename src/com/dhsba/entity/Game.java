@@ -6,7 +6,7 @@ import com.dhsba.service.GameService;
 import java.util.ArrayList;
 
 /**
- * 表示三局两胜中的“局”
+ * 表示两个成员在该轮的对局，默认为三局两胜
  * 显示大比分和小比分
  */
 public class Game implements GameService {
@@ -23,5 +23,15 @@ public class Game implements GameService {
         this.round = round;
         this.a = a;
         this.b = b;
+    }
+
+    @Override
+    public void changePoint(Athlete athlete, int gameNumber) {
+
+    }
+
+    @Override
+    public void showInfo() {
+
     }
 }

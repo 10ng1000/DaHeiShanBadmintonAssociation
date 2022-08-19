@@ -29,4 +29,34 @@ public class Athlete implements AthleteService {
         this.athleteCategory = athleteCategory;
         this.level = level;
     }
+
+    @Override
+    public void showInfo() {
+
+    }
+
+    @Override
+    public void showMyCompetition() {
+
+    }
+
+    @Override
+    public boolean SignUpCompetition(Competition competition) {
+        return false;
+    }
+
+    @Override
+    public boolean cancelCompetitionSignUp(Competition competition) {
+        return false;
+    }
+
+    @Override
+    public void changeInfo(String InfoName, String newInfo) {
+
+    }
+
+    @Override
+    public boolean changePassWord(String oldPassWord, String newPassWord) {
+        return false;
+    }
 }
