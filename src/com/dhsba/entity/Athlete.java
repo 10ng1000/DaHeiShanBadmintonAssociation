@@ -21,7 +21,7 @@ public class Athlete implements AthleteService {
     ArrayList<Competition> competitionRecord;
     Account account;
     boolean isInCompetition;
-    boolean isCourtReserved;
+    boolean reservingCourt;
 
     public Athlete(String name, String gender, AthleteCategory athleteCategory, int level) {
         this.name = name;
