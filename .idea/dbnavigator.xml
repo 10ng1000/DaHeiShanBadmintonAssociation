@@ -29,7 +29,12 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="066cea09-d9c1-41da-b36c-79ccf3500b83">
-      <console name="Connection" type="STANDARD" schema="mydb" session="Main"><![CDATA[select * from account where number = '123']]></console>
+      <console name="Connection" type="STANDARD" schema="mydb" session="Main"><![CDATA[ALTER TABLE `mydb`.`athlete` 
+ADD CONSTRAINT `account_number`
+  FOREIGN KEY (`account_number`)
+  REFERENCES `mydb`.`account` (`number`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;]]></console>
     </connection>
     <connection id="23c19faa-780c-4db5-a541-dfccdcf6e158">
       <console name="Connection 1" type="STANDARD" schema="" session="Main" />
@@ -44,6 +49,7 @@
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="066cea09-d9c1-41da-b36c-79ccf3500b83" dataset="mydb.account" active-filter-id="" />
+    <filter-actions connection-id="066cea09-d9c1-41da-b36c-79ccf3500b83" dataset="mydb.athlete" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />

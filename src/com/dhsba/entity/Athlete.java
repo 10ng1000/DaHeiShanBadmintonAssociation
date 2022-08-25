@@ -23,13 +23,6 @@ public class Athlete implements AthleteService {
     boolean isInCompetition;
     boolean reservingCourt;
 
-    public Athlete(String name, String gender, AthleteCategory athleteCategory, int level) {
-        this.name = name;
-        this.gender = gender;
-        this.athleteCategory = athleteCategory;
-        this.level = level;
-    }
-
     @Override
     public void showInfo() {
 
