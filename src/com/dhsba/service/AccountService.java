@@ -6,6 +6,11 @@ package com.dhsba.service;
  * 登陆
  */
 public interface AccountService {
-    void changePassWord(String newPassword); //更改密码，此方法为通用方法
-    boolean login(String account, String passWord); //登陆账号，返回是否登陆成功
+
+    /**
+     * 更改用户密码并保存更改到数据库中
+     *
+     * @param newPassword
+     */
+    void changePassWord(String newPassword);
 }

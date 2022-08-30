@@ -23,5 +23,7 @@ package com.dhsba.controller;
  * 更改密码
  */
 public class AthleteMenu {
+    public void start() {
 
+    }
 }

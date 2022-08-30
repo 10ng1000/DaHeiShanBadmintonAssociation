@@ -1,7 +1,5 @@
 package com.dhsba.dao;
 
-import com.dhsba.entity.Athlete;
-
 import java.util.ArrayList;
 
 /**
@@ -26,18 +24,6 @@ public class AthleteDao extends BaseDao{
     public int createAthlete(String accountNumber, String name, String gender) {
         String sql = "insert into athlete (account_number, name, gender) values (?, ?, ?)";
         Object[] param = {accountNumber, name, gender};
-        return this.executeUpdate(sql, param);
-    }
-
-    /**
-     * 创建比赛记录
-     * @param accountNumber
-     * @param competitionId
-     * @return
-     */
-    public int createCompetitionRecord(String accountNumber, int competitionId) {
-        String sql = "insert into athlete_in_competition values(?,?)";
-        Object[] param = {accountNumber, competitionId};
         return this.executeUpdate(sql, param);
     }
 
@@ -71,22 +57,28 @@ public class AthleteDao extends BaseDao{
         return this.executeUpdate(sql, param);
     }
 
-    public int updateCompetitionCount(String accountNumber, String newValue) {
+    public int updateCompetitionCount(String accountNumber, int newValue) {
         String sql = "update athlete set competition_count = ? where account_number = ?";
         Object[] param = {newValue, accountNumber};
         return this.executeUpdate(sql, param);
     }
 
-    public int updateWinCount(String accountNumber, String newValue) {
+    public int updateWinCount(String accountNumber, int newValue) {
         String sql = "update athlete set win_count = ? where account_number = ?";
         Object[] param = {newValue, accountNumber};
         return this.executeUpdate(sql, param);
     }
 
+    /**
+     * 删除运动员参加比赛的记录
+     *
+     * @param accountNumber
+     * @param oldValue
+     * @return
+     */
     public int deleteCompetitionRecord(String accountNumber, String oldValue) {
         String sql = "delete from athlete_in_competition where athlete_number = ? and competition_id = ?";
         Object[] param = {accountNumber, oldValue};
         return this.executeUpdate(sql, param);
     }
-
 }

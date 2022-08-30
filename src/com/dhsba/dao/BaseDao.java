@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 public abstract class BaseDao {
@@ -38,9 +37,9 @@ public abstract class BaseDao {
         try{
             Class.forName(DRIVER);
             connection = DriverManager.getConnection(URL,DBNAME,DBPASSWORD);
-            System.out.println("连接成功！");
         }
         catch(Exception e){
+            System.err.println("数据库连接失败");
             e.printStackTrace();
         }
         return connection;

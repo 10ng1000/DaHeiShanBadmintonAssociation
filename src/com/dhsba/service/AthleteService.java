@@ -12,10 +12,34 @@ import com.dhsba.entity.Competition;
  * 更改密码
  */
 public interface AthleteService {
-    void showInfo(); //显示选手个人信息
-    void showMyCompetition(); //显示选手参与的比赛，其中未参与的比赛位于最后
-    boolean SignUpCompetition(Competition competition); //报名指定比赛，返回是否报名成功
-    boolean cancelCompetitionSignUp(Competition competition); //退出指定比赛的报名，返回是否成功
-    void changeInfo(String InfoName, String newInfo); //更改个人信息，参数为字符串
-    boolean changePassWord(String oldPassWord, String newPassWord); //更改密码，返回是否更改成功
+
+    /**
+     * 显示选手参与的比赛，其中未参与的比赛位于最后
+     */
+    void showCompetition();
+
+    /**
+     * 报名指定比赛
+     *
+     * @param competition 指定退出的比赛
+     * @return 是否报名成功
+     */
+    boolean SignUpCompetition(Competition competition);
+
+    /**
+     * 退出指定比赛的报名
+     *
+     * @param competition 指定的比赛
+     * @return 是否退出成功，不成功可能为：没有参与该比赛，该比赛不存在，该比赛已开始/结束。
+     */
+    boolean cancelCompetitionSignUp(Competition competition);
+
+    /**
+     * 更改密码
+     *
+     * @param oldPassWord 旧密码
+     * @param newPassWord 新密码
+     * @return 是否成功（需要旧密码正确）
+     */
+    boolean changePassword(String oldPassWord, String newPassWord); //更改密码，返回是否更改成功
 }

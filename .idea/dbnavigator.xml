@@ -39,6 +39,25 @@ ADD CONSTRAINT `account_number`
     <connection id="23c19faa-780c-4db5-a541-dfccdcf6e158">
       <console name="Connection 1" type="STANDARD" schema="" session="Main" />
     </connection>
+    <connection id="560e6c78-a0f0-4b4b-a431-c206a902d23e">
+      <console name="Connection 2" type="STANDARD" schema="mydb" session="Main"><![CDATA[select t1.game_round, t1.game_id, na1, na2, nb1, nb2, t1.a_point, t3.b_point from 
+(select game_round, name na1, game_id, a_point, game_num
+ from double_game natural join double_game_point join athlete on athlete_a1_num = account_number) as t1 
+join
+(select game_round, name na2, game_id, b_point, game_num
+ from double_game natural join double_game_point join athlete on athlete_a2_num = account_number) as t2
+on t1.game_id = t2.game_id and t1.game_num = t2.game_num
+join 
+(select game_round, name nb1, game_id, b_point, game_num
+ from double_game natural join double_game_point join athlete on athlete_b1_num = account_number) as t3
+ on t2.game_id = t3.game_id and t2.game_num = t3.game_num
+join 
+(select game_round, name nb2, game_id, b_point, game_num
+ from double_game natural join double_game_point join athlete on athlete_b2_num = account_number) as t4
+on t3.game_id = t4.game_id and t3.game_num = t4.game_num
+
+select * from game_point natural join single_game]]></console>
+    </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
@@ -46,6 +65,7 @@ ADD CONSTRAINT `account_number`
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="066cea09-d9c1-41da-b36c-79ccf3500b83" />
     <connection id="23c19faa-780c-4db5-a541-dfccdcf6e158" />
+    <connection id="560e6c78-a0f0-4b4b-a431-c206a902d23e" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="066cea09-d9c1-41da-b36c-79ccf3500b83" dataset="mydb.account" active-filter-id="" />
@@ -181,6 +201,90 @@ ADD CONSTRAINT `account_number`
           <type value="USER_PASSWORD" />
           <user value="" />
           <deprecated-pwd value="" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="true" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="false" />
+          <environment-type value="default" />
+          <connectivity-timeout value="5" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <credential-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
+          <object-type-filter>
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+          <object-name-filters />
+        </object-filters>
+      </connection>
+      <connection id="560e6c78-a0f0-4b4b-a431-c206a902d23e" active="true" signed="true">
+        <database>
+          <name value="Connection 2" />
+          <description value="" />
+          <database-type value="MYSQL" />
+          <config-type value="BASIC" />
+          <database-version value="8.0" />
+          <driver-source value="BUILTIN" />
+          <driver-library value="" />
+          <driver value="" />
+          <url-type value="DATABASE" />
+          <host value="localhost" />
+          <port value="3306" />
+          <database value="mysql" />
+          <type value="USER_PASSWORD" />
+          <user value="root" />
+          <deprecated-pwd value="cm9vdA==" />
         </database>
         <properties>
           <auto-commit value="false" />

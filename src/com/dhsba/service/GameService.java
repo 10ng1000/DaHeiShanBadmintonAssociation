@@ -1,6 +1,7 @@
 package com.dhsba.service;
 
-import com.dhsba.entity.Athlete;
+import com.dhsba.entity.Participant;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * 功能：
@@ -10,8 +11,17 @@ import com.dhsba.entity.Athlete;
  */
 public interface GameService {
     /**
-     * 更改该轮比赛指定（第几）场指定运动员的得分，在球员得分达到胜利条件时修改运动员在该轮比赛的胜场，如果该运动员达到两胜则晋级
+     * 更改该轮比赛未记录成绩的下一场的运动员的得分，在球员得分达到胜利条件时修改运动员在该轮比赛的胜场，如果该运动员达到两胜则晋级
+     *
+     * @param newPoint 本场比分，按照显示的运动员顺序填写比分
+     * @return 比赛是否结束
      */
-    void changePoint(Athlete athlete, int gameNumber);
-    void showInfo();// 显示选手比分
+    boolean changePoint(Pair<Integer, Integer> newPoint);
+
+    /**
+     * 保存对局到数据库
+     *
+     * @return
+     */
+    boolean saveGame(int competitionId, Participant athleteA, Participant athleteB);
 }
