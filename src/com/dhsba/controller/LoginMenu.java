@@ -1,6 +1,9 @@
 package com.dhsba.controller;
 
+import com.dhsba.common.AthleteCategory;
 import com.dhsba.dao.AccountDao;
+import com.dhsba.entity.Account;
+import com.dhsba.entity.Athlete;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -22,7 +25,7 @@ public class LoginMenu {
                 case 2:
                     if (login(true)) return;
                 case 3:
-                    if (signIn()) return;
+                    signIn();
             }
         }
     }
@@ -45,7 +48,7 @@ public class LoginMenu {
         System.out.println("请输入密码");
         password = scanner.nextLine();
         if (checkLogin(number, password)) {
-            if (type) new AthleteMenu();
+            if (type) new AthleteMenu(number, password);
             else new AdministratorMenu();
             return true;
         }
@@ -63,12 +66,25 @@ public class LoginMenu {
         AccountDao accountDao = new AccountDao();
         String number = scanner.nextLine();
         String password = scanner.nextLine();
+        Account account;
         try {
             accountDao.createAccount(number, password);
+            account = new Account(number, password, false);
         } catch (SQLException e) {
             System.out.println("该账号已存在，请重试");
             return false;
         }
+        System.out.println("姓名：");
+        String name = scanner.nextLine();
+        System.out.println("性别：");
+        String gender = scanner.nextLine();
+        System.out.println("类别：");
+        System.out.println("可选：" + AthleteCategory.values());
+        AthleteCategory athleteCategory = AthleteCategory.valueOf(scanner.nextLine());
+        System.out.println("等级：");
+        System.out.println("可选：" + "从一到九");
+        int level = scanner.nextInt();
+        Athlete athlete = new Athlete(name, gender, athleteCategory, level, account);
         System.out.println("成功注册");
         return true;
     }

@@ -1,6 +1,7 @@
 package com.dhsba.entity;
 
 import com.dhsba.common.AthleteCategory;
+import com.dhsba.common.CourtState;
 import com.dhsba.dao.AccountDao;
 import com.dhsba.dao.AthleteDao;
 import com.dhsba.dao.CompetitionDao;
@@ -27,9 +28,32 @@ public class Athlete implements AthleteService, ShowAble {
     ArrayList<Competition> competitions;
     Account account;
     boolean isInCompetition;
-    boolean reservingCourt;
-    Athlete pair = null; //如果是双打则有pair
+    Court reservingCourt;
+    String pair_number = null; //如果是双打则有pair
 
+    /**
+     * 新注册运动员
+     */
+    public Athlete(String name, String gender, AthleteCategory athleteCategory, int level, Account account) {
+        this.name = name;
+        this.gender = gender;
+        this.athleteCategory = athleteCategory;
+        this.level = level;
+        this.account = account;
+    }
+
+    /**
+     * 从数据库中读取单打运动员记录
+     *
+     * @param name
+     * @param gender
+     * @param athleteCategory
+     * @param level
+     * @param competitionCount
+     * @param winCount
+     * @param competitions
+     * @param account
+     */
     public Athlete(String name, String gender, AthleteCategory athleteCategory, int level, int competitionCount,
                    int winCount, ArrayList<Competition> competitions, Account account) {
         this.name = name;
@@ -42,9 +66,22 @@ public class Athlete implements AthleteService, ShowAble {
         this.account = account;
     }
 
-    public Athlete(AthleteDao athleteDao, String name, String gender, AthleteCategory athleteCategory, int level,
-                   int competitionCount, int winCount, ArrayList<Competition> competitions, Account account, Athlete pair) {
-        this.athleteDao = athleteDao;
+    /**
+     * 从数据库中读取双打运动员记录
+     *
+     * @param name
+     * @param gender
+     * @param athleteCategory
+     * @param level
+     * @param competitionCount
+     * @param winCount
+     * @param competitions
+     * @param account
+     * @param pair_number
+     */
+    public Athlete(String name, String gender, AthleteCategory athleteCategory, int level,
+                   int competitionCount, int winCount, ArrayList<Competition> competitions,
+                   Account account, String pair_number) {
         this.name = name;
         this.gender = gender;
         this.athleteCategory = athleteCategory;
@@ -53,7 +90,7 @@ public class Athlete implements AthleteService, ShowAble {
         this.winCount = winCount;
         this.competitions = competitions;
         this.account = account;
-        this.pair = pair;
+        this.pair_number = pair_number;
     }
 
     public static Athlete loadAthlete(String account_number) {
@@ -65,7 +102,7 @@ public class Athlete implements AthleteService, ShowAble {
         return new Athlete((String) information.get(0), (String) information.get(1),
                 AthleteCategory.valueOf((String) information.get(2)),
                 (int) information.get(3), (int) information.get(4), (int) information.get(5),
-                competitions, accountDao.getAccount(account_number, false)
+                competitions, accountDao.getAccount(account_number, false), (String) information.get(7)
         );
     }
 
@@ -74,12 +111,12 @@ public class Athlete implements AthleteService, ShowAble {
      */
     @Override
     public void showInfo() {
-        System.out.println("姓名：" + name);
-        System.out.println("性别：" + gender);
-        System.out.println("类别：" + athleteCategory);
-        System.out.println("等级：" + level);
-        System.out.println("总场数：" + competitionCount);
-        System.out.println("胜场：" + winCount);
+        System.out.println("1. 姓名：" + name);
+        System.out.println("2. 性别：" + gender);
+        System.out.println("3. 类别：" + athleteCategory);
+        System.out.println("4. 等级：" + level);
+        System.out.println("5. 总场数：" + competitionCount);
+        System.out.println("6. 胜场：" + winCount);
     }
 
     @Override
@@ -107,24 +144,27 @@ public class Athlete implements AthleteService, ShowAble {
 
     @Override
     public boolean SignUpCompetition(Competition competition) {
-        if (competition.isFull()) {
+        if (!competition.canParticipate() || athleteCategory != competition.getType() || isInCompetition) {
             return false;
         } else {
             competitions.add(competition);
-            if (pair != null) competition.addParticipant(new Participant(this));
-            else competition.addParticipant(new Participant(Pair.of(this, pair)));
+            isInCompetition = true;
+            if (pair_number != null) competition.addParticipant(new Participant(this));
+            else competition.addParticipant(new Participant(Pair.of(this, loadAthlete(pair_number))));
             return true;
         }
     }
 
     @Override
     public boolean cancelCompetitionSignUp(Competition competition) {
-        if (competition.getStartTime().before(new Date(System.currentTimeMillis()))) {
+        if (competition.getStartTime().before(new Date(System.currentTimeMillis())) ||
+                !competitions.contains(competition)) {
             return false;
         } else {
             competitions.remove(competition);
-            if (pair != null) competition.deleteParticipant(this.getAccountNumber());
-            else competition.deleteParticipant((Pair.of(this.getAccountNumber(), pair.getAccountNumber())));
+            isInCompetition = false;
+            if (pair_number != null) competition.deleteParticipant(this.getAccountNumber());
+            else competition.deleteParticipant((Pair.of(this.getAccountNumber(), pair_number)));
             return true;
         }
     }
@@ -133,6 +173,26 @@ public class Athlete implements AthleteService, ShowAble {
     public boolean changePassword(String oldPassword, String newPassword) {
         if (oldPassword.equals(account.getPassword())) {
             account.changePassWord(newPassword);
+        }
+        return false;
+    }
+
+    public boolean reserveCourt(int number, CourtState futureState) {
+        CourtManager courtManager = CourtManager.getInstance();
+        Court court = courtManager.getCourt(number);
+        if (court.reserveCourt(futureState)) {
+            reservingCourt = court;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean freeCourt(int number) {
+        CourtManager courtManager = CourtManager.getInstance();
+        Court court = courtManager.getCourt(number);
+        if (court.freeCourt()) {
+            reservingCourt = null;
+            return true;
         }
         return false;
     }
@@ -165,11 +225,17 @@ public class Athlete implements AthleteService, ShowAble {
         isInCompetition = inCompetition;
     }
 
-    public void setReservingCourt(boolean reservingCourt) {
+    public Court getReservingCourt() {
+        return reservingCourt;
+    }
+
+    public void setReservingCourt(Court reservingCourt) {
         this.reservingCourt = reservingCourt;
     }
 
     public String getAccountNumber() {
         return account.getAccountNumber();
     }
+
+
 }

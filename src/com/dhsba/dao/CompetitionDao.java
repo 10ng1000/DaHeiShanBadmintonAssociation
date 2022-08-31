@@ -21,11 +21,7 @@ public class CompetitionDao extends BaseDao {
      * @param startTime
      * @return 受影响的行数
      */
-    public int createCompetitionRecord(String category, int regCount, int regMax, Date startTime) {
-        // 获取当前最新的competition_id
-        int competitionId = this.executeQuery(int.class,
-                "select competition_id from game order by competition_id desc",
-                null).stream().findFirst().orElse(0) + 1;
+    public int createCompetitionRecord(String category, int regCount, int regMax, Date startTime, int competitionId) {
         String sql = "insert into competition " +
                 "(competition_id, category, reg_count, reg_max, start_time)" +
                 "values (?, ?, ?, ?, ?)";
@@ -42,6 +38,12 @@ public class CompetitionDao extends BaseDao {
      */
     public int createParticipantRecord(String accountNumber, int competitionId) {
         String sql = "insert into athlete_in_competition (athlete_number, competition_id) values(?,?)";
+        Object[] param = {accountNumber, competitionId};
+        return this.executeUpdate(sql, param);
+    }
+
+    public int deleteParticipantRecord(String accountNumber, int competitionId) {
+        String sql = "delete from athlete_in_competition where athlete_number = ? and competition_id = ?";
         Object[] param = {accountNumber, competitionId};
         return this.executeUpdate(sql, param);
     }
@@ -97,5 +99,12 @@ public class CompetitionDao extends BaseDao {
             games = new ArrayList<>();
         }
         return competitions;
+    }
+
+    public int getNewestId() {
+        // 获取当前最新的competition_id
+        return this.executeQuery(int.class,
+                "select competition_id from game order by competition_id desc",
+                null).stream().findFirst().orElse(0) + 1;
     }
 }

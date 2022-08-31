@@ -29,11 +29,12 @@ public class AthleteDao extends BaseDao{
 
     /**
      * 查询运动员的所有信息
+     *
      * @param accountNumber 使用运动员id进行查询
-     * @return 列表中依次为： name, gender, category, level, competition_count, win_count, account_number
+     * @return 列表中依次为： name, gender, category, level, competition_count, win_count, account_number, pair_number
      */
     public ArrayList<Object> getInformation(String accountNumber) {
-        String sql = "select name, gender, category, level, competition_count,win_count, account_number" +
+        String sql = "select name, gender, category, level, competition_count,win_count, account_number, pair_number" +
                 " from account join athlete on number = account_number where account_number = ?";
         Object[] param = {accountNumber};
         return this.executeQuery(Object.class, sql, param);

@@ -20,11 +20,18 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
     Round round;
     Object athleteA;
     Object athleteB;
-    ArrayList<Pair<Integer, Integer>> points;
+    ArrayList<Pair<Integer, Integer>> points = null;
     int aWins;
     int bWins;
     Object winner;
 
+    /**
+     * 创建新的对局
+     *
+     * @param round
+     * @param athleteA
+     * @param athleteB
+     */
     public Game(Round round, Object athleteA, Object athleteB) {
         this.round = round;
         this.athleteA = athleteA;
@@ -33,7 +40,6 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
 
     /**
      * 创建已经完成的对局
-     *
      * @param round
      * @param athleteA
      * @param athleteB
@@ -55,7 +61,6 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
 
     /**
      * 创建没有进行的对局
-     *
      * @param type     比赛类型：如单打或是双打
      * @param round    轮数
      * @param athleteA 如果是单打，则为字符串类型；如果是双打，则为Pair<String, String>类型

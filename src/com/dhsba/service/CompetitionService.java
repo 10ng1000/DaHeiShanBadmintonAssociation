@@ -24,28 +24,30 @@ public interface CompetitionService {
     void arrangeGames();
 
     /**
-     * 增加参赛选手
+     * 是否能够支持运动员继续参加比赛
+     *
+     * @return
+     */
+    boolean canParticipate();
+
+    /**
+     * 增加参赛选手并写入数据库
+     * !controller层不要调用该方法
      *
      * @param participant
      */
     void addParticipant(Participant participant);
 
     /**
-     * 删除参赛选手
+     * 删除参赛选手并同步数据库
+     * !controller层不要调用该方法
      *
      * @param number
      */
     void deleteParticipant(Object number);
 
     /**
-     * 结束比赛完成选手比赛状态修改等，并将对局记录下来。如果比赛没有开始则取消比赛。
+     * 结束比赛完成选手比赛状态修改等，并将对局记录到数据库。如果比赛没有开始则取消比赛。
      */
     void endCompetition();
-
-    /**
-     * 是否满员
-     *
-     * @return
-     */
-    boolean isFull();
 }

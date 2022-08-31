@@ -7,9 +7,7 @@ import com.dhsba.service.CompetitionService;
 import com.dhsba.service.ShowAble;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 比赛类
@@ -26,6 +24,33 @@ public class Competition implements CompetitionService, Comparable<Competition>,
     ArrayList<Game> games;
     ArrayList<Participant> participants;
 
+    /**
+     * 管理员创建比赛
+     *
+     * @param type
+     * @param startTime
+     * @param registerMax
+     */
+    public Competition(AthleteCategory type, Date startTime, int registerMax) {
+        this.type = type;
+        this.startTime = startTime;
+        this.registerMax = registerMax;
+        this.competitionId = competitionDao.getNewestId();
+        Timer timer = new Timer();
+        CompetitionTimerTask timerTask = new CompetitionTimerTask();
+        timer.schedule(timerTask, startTime);
+    }
+
+    /**
+     * 从数据库里读取比赛
+     *
+     * @param type
+     * @param startTime
+     * @param registerCount
+     * @param registerMax
+     * @param games
+     * @param competitionId
+     */
     public Competition(AthleteCategory type, Date startTime, int registerCount, int registerMax,
                        ArrayList<Game> games, int competitionId) {
         this.type = type;
@@ -36,15 +61,24 @@ public class Competition implements CompetitionService, Comparable<Competition>,
         this.competitionId = competitionId;
     }
 
+    /**
+     * 显示详细信息
+     */
     @Override
     public void showInfo() {
         System.out.println(this);
         showGameInfo();
     }
 
+    /**
+     * 显示简略信息
+     *
+     * @return
+     */
     @Override
     public String toString() {
-        return "类别=" + type +
+        return "Id =" + competitionId +
+                ", 类型=" + type +
                 ", 开始时间=" + startTime +
                 ", 报名人数=" + registerCount +
                 ", 人数上限=" + registerMax;
@@ -52,7 +86,7 @@ public class Competition implements CompetitionService, Comparable<Competition>,
 
     @Override
     public void showGameInfo() {
-        System.out.println("---赛程信息---");
+        System.out.println("赛程信息");
         System.out.println("---16强---");
         for (Game game : games) {
             if (game.getRound() == Round.elimination) game.showInfo();
@@ -72,6 +106,19 @@ public class Competition implements CompetitionService, Comparable<Competition>,
     }
 
     @Override
+    public void addParticipant(Participant participant) {
+        this.participants.add(participant);
+        if (!type.isSingle()) {
+            Pair<String, String> pair = (Pair<String, String>) participant.getAccountNumber();
+            competitionDao.createParticipantRecord(pair.getLeft(), competitionId);
+            competitionDao.createParticipantRecord(pair.getRight(), competitionId);
+        } else {
+            competitionDao.createParticipantRecord((String) participant.getAccountNumber(), competitionId);
+        }
+        registerCount++;
+    }
+
+    @Override
     public void arrangeGames() {
         Collections.shuffle(participants);
         Round round = Round.elimination;
@@ -85,23 +132,17 @@ public class Competition implements CompetitionService, Comparable<Competition>,
     }
 
     @Override
-    public void addParticipant(Participant participant) {
-        this.participants.add(participant);
-        if (participant.getAccountNumber().getClass() == Pair.class) {
-            Pair<String, String> pair = (Pair<String, String>) participant.getAccountNumber();
-            competitionDao.createParticipantRecord(pair.getLeft(), competitionId);
-            competitionDao.createParticipantRecord(pair.getRight(), competitionId);
-        } else {
-            competitionDao.createParticipantRecord((String) participant.getAccountNumber(), competitionId);
-        }
-        registerCount++;
-    }
-
-    @Override
     public void deleteParticipant(Object number) {
         for (Participant participant : participants) {
             if (participant.getAccountNumber() == number) {
                 participants.remove(participant);
+                if (!type.isSingle()) {
+                    Pair<String, String> pair = (Pair<String, String>) participant.getAccountNumber();
+                    competitionDao.deleteParticipantRecord(pair.getLeft(), competitionId);
+                    competitionDao.deleteParticipantRecord(pair.getRight(), competitionId);
+                } else {
+                    competitionDao.deleteParticipantRecord((String) participant.getAccountNumber(), competitionId);
+                }
                 registerCount--;
             }
         }
@@ -113,13 +154,24 @@ public class Competition implements CompetitionService, Comparable<Competition>,
      */
     @Override
     public void endCompetition() {
-        competitionDao.createCompetitionRecord(type.toString(), registerCount, registerMax, startTime);
+        competitionDao.createCompetitionRecord(type.toString(), registerCount, registerMax, startTime, competitionId);
+        for (Participant participant : participants) {
+            if (type.isSingle()) ((Athlete) participant.getAthlete()).setInCompetition(false);
+            else {
+                ((Pair<Athlete, Athlete>) participant.getAthlete()).getLeft().setInCompetition(false);
+                ((Pair<Athlete, Athlete>) participant.getAthlete()).getRight().setInCompetition(false);
+            }
+        }
         isEnd = true;
     }
 
     @Override
-    public boolean isFull() {
-        return registerCount >= registerMax;
+    public boolean canParticipate() {
+        return registerCount < registerMax && startTime.after(new Date(System.currentTimeMillis()));
+    }
+
+    public int getCompetitionId() {
+        return competitionId;
     }
 
     /**
@@ -139,5 +191,19 @@ public class Competition implements CompetitionService, Comparable<Competition>,
 
     public boolean isEnd() {
         return isEnd;
+    }
+
+    public AthleteCategory getType() {
+        return type;
+    }
+
+    public ArrayList<Game> getGames() {
+        return games;
+    }
+
+    class CompetitionTimerTask extends TimerTask {
+        public void run() {
+            arrangeGames();
+        }
     }
 }
