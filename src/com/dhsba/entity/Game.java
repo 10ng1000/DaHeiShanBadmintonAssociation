@@ -111,7 +111,7 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
     public void showInfo() {
         System.out.println("运动员：" + athleteA + '，' + athleteB);
         for (Pair<Integer, Integer> point : points) {
-            System.out.println(point.getLeft() + '：' + point.getRight());
+            System.out.println(point.getLeft().toString() + '：' + point.getRight().toString());
         }
         if (winner != null) {
             System.out.println("获胜者：" + winner);

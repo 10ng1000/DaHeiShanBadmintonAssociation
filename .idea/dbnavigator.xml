@@ -56,7 +56,13 @@ join
  from double_game natural join double_game_point join athlete on athlete_b2_num = account_number) as t4
 on t3.game_id = t4.game_id and t3.game_num = t4.game_num
 
-select * from game_point natural join single_game]]></console>
+select * from game_point natural join single_game
+
+
+
+delete from account where number = 1;
+
+delete from account where number = 2;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">

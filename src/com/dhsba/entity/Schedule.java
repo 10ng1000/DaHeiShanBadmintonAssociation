@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Schedule {
     private static final Schedule schedule = new Schedule();
-    ArrayList<Competition> competitions;
+    ArrayList<Competition> competitions = new ArrayList<>();
 
     /**
      * 在创建对象时，加载数据库中所有的比赛

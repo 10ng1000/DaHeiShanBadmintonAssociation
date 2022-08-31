@@ -36,14 +36,14 @@ public class AthleteMenu {
 
     public AthleteMenu(String number, String password) {
         athlete = Athlete.loadAthlete(number); // 生成athlete对象
-        System.out.println(athlete.getName());
+        System.out.println("欢迎您 " + athlete.getName());
         int next = -1;
         while (next != 0) {
-            next = scanner.nextInt();
             System.out.println("0. 退出");
             System.out.println("1. 比赛");
             System.out.println("2. 场地");
             System.out.println("3. 个人");
+            next = scanner.nextInt();
             switch (next) {
                 case 1 -> competitionMenu();
                 case 2 -> courtMenu();
@@ -72,10 +72,10 @@ public class AthleteMenu {
             next = scanner.nextInt();
             switch (next) {
                 case 1 -> {
+                    schedule.showSchedule();
                     System.out.println("输入编号查看详细信息,按0返回");
                     int number = scanner.nextInt();
                     if (number == 0) break;
-                    schedule.showSchedule();
                     Competition competition = schedule.getCompetition(number);
                     if (competition == null) {
                         System.out.println("该ID对应的比赛不存在");
@@ -128,27 +128,33 @@ public class AthleteMenu {
         CourtManager courtManager = CourtManager.getInstance();
         int next = -1;
         while (next != 0) {
-            next = scanner.nextInt();
             System.out.println("0. 返回");
             System.out.println("1. 场地列表");
             System.out.println("2. 预定场地");
             System.out.println("3. 查看预定");
+            next = scanner.nextInt();
             switch (next) {
-                case 1 -> {
-                    courtManager.showInfo();
-                }
+                case 1 -> courtManager.showInfo();
                 case 2 -> {
                     System.out.println("请输入想要预定的场地号，按0返回");
                     int number = scanner.nextInt();
                     if (number == 0) break;
-                    athlete.reserveCourt(number, CourtState.commonReserve);
+                    if (athlete.reserveCourt(number, CourtState.commonReserve)) {
+                        System.out.println("预定成功");
+                    } else {
+                        System.out.println("预定失败");
+                    }
                 }
                 case 3 -> {
                     System.out.println("您已预定的场地" + athlete.getReservingCourt());
-                    System.out.println("请输入想要取消预定的场地号，按0返回");
+                    System.out.println("如果您要取消预定，请输入想要取消预定的场地号；按0返回");
                     int number = scanner.nextInt();
                     if (number == 0) break;
-                    athlete.freeCourt(number);
+                    if (athlete.freeCourt(number)) {
+                        System.out.println("取消成功");
+                    } else {
+                        System.out.println("取消失败");
+                    }
                 }
             }
         }
@@ -163,13 +169,14 @@ public class AthleteMenu {
     public void personalMenu() {
         int next = -1;
         while (next != 0) {
-            next = scanner.nextInt();
             System.out.println("0. 返回");
             System.out.println("1. 显示个人信息");
             System.out.println("2. 更改密码");
+            next = scanner.nextInt();
             switch (next) {
                 case 1 -> {
                     athlete.showInfo();
+                    System.out.println();
                 }
                 case 2 -> {
                     System.out.println("请输入旧密码，按0返回");
@@ -180,7 +187,7 @@ public class AthleteMenu {
                     if (athlete.changePassword(old, newPassword)) {
                         System.out.println("修改密码成功");
                     } else {
-                        System.out.println("旧密码错误");
+                        System.out.println("旧密码错误或新旧密码相同");
                     }
                 }
             }

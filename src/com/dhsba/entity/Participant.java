@@ -44,4 +44,22 @@ public class Participant {
             return Pair.of(athlete.getLeft().getAccountNumber(), athlete.getRight().getAccountNumber());
         }
     }
+
+    public void addWinCount() {
+        if (athleteCategory.isSingle()) {
+            ((Athlete) athlete).addWinCount();
+        } else {
+            ((Pair<Athlete, Athlete>) athlete).getLeft().addWinCount();
+            ((Pair<Athlete, Athlete>) athlete).getRight().addWinCount();
+        }
+    }
+
+    public void addCompetitionCount() {
+        if (athleteCategory.isSingle()) {
+            ((Athlete) athlete).addCompetitionCount();
+        } else {
+            ((Pair<Athlete, Athlete>) athlete).getLeft().addCompetitionCount();
+            ((Pair<Athlete, Athlete>) athlete).getRight().addCompetitionCount();
+        }
+    }
 }

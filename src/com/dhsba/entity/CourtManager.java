@@ -20,6 +20,7 @@ public class CourtManager implements ShowAble {
         courts.add(new Court(7, Position.north));
         courts.add(new Court(8, Position.north));
         courts.add(new Court(9, Position.north));
+
     }
 
     public static CourtManager getInstance() {
@@ -31,7 +32,7 @@ public class CourtManager implements ShowAble {
     }
 
     public Court getCourt(int number) {
-        return courts.get(number + 1);
+        return courts.get(number - 1);
     }
 
     @Override

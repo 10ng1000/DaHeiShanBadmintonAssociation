@@ -2,6 +2,7 @@ package com.dhsba.controller;
 
 import com.dhsba.common.AthleteCategory;
 import com.dhsba.common.Round;
+import com.dhsba.dao.CompetitionDao;
 import com.dhsba.entity.Competition;
 import com.dhsba.entity.CourtManager;
 import com.dhsba.entity.Game;
@@ -17,6 +18,7 @@ import java.util.Scanner;
 /**
  * 管理员界面：
  * 闲置场地（选手提前离开但是忘了释放场地）
+ * 特殊预约场地
  * 创建比赛
  * 对局计分
  */
@@ -24,25 +26,20 @@ public class AdministratorMenu {
     Scanner scanner = new Scanner(System.in);
     Schedule schedule = Schedule.getInstance();
     CourtManager courtManager = CourtManager.getInstance();
+    CompetitionDao competitionDao = new CompetitionDao();
 
     public AdministratorMenu() {
         int next = -1;
         while (next != 0) {
-            next = scanner.nextInt();
             System.out.println("0. 退出");
             System.out.println("1. 闲置场地");
             System.out.println("2. 创建比赛");
             System.out.println("3. 对局计分");
+            next = scanner.nextInt();
             switch (next) {
-                case 1 -> {
-                    freeCourt();
-                }
-                case 2 -> {
-                    createCompetition();
-                }
-                case 3 -> {
-                    recordGame();
-                }
+                case 1 -> freeCourt();
+                case 2 -> createCompetition();
+                case 3 -> recordGame();
             }
         }
     }
@@ -60,11 +57,11 @@ public class AdministratorMenu {
     }
 
     public void createCompetition() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         System.out.println("输入相关信息，按0返回，按其他任意键继续");
         int next = scanner.nextInt();
         if (next == 0) return;
-        System.out.println("类型：" + AthleteCategory.values());
+        System.out.println("类型：" + AthleteCategory.allToString());
         AthleteCategory type = AthleteCategory.valueOf(scanner.next());
         System.out.println("日期：" + "格式：yyyy-mm-dd");
         String input = scanner.next();
@@ -75,8 +72,11 @@ public class AdministratorMenu {
             System.out.println("格式错误，请重试");
             return;
         }
+        System.out.println("人数上限：");
         int registerMax = scanner.nextInt();
         schedule.addCompetition(new Competition(type, date, registerMax));
+        competitionDao.createCompetitionRecord(type.toString(), registerMax, date, competitionDao.getNewestId());
+        System.out.println("创建比赛成功");
     }
 
     public void recordGame() {

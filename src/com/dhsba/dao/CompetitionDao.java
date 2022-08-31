@@ -13,19 +13,24 @@ import java.util.Date;
 public class CompetitionDao extends BaseDao {
 
     /**
-     * 完全完成比赛后记录比赛
+     * 初步记录比赛
      *
      * @param category
-     * @param regCount
      * @param regMax
      * @param startTime
      * @return 受影响的行数
      */
-    public int createCompetitionRecord(String category, int regCount, int regMax, Date startTime, int competitionId) {
+    public int createCompetitionRecord(String category, int regMax, Date startTime, int competitionId) {
         String sql = "insert into competition " +
                 "(competition_id, category, reg_count, reg_max, start_time)" +
-                "values (?, ?, ?, ?, ?)";
-        Object[] param = {competitionId, category, regCount, regMax, startTime};
+                "values (?, ?, 0, ?, ?)";
+        Object[] param = {competitionId, category, regMax, startTime};
+        return this.executeUpdate(sql, param);
+    }
+
+    public int updateRegisterCount(int competitionId, int count) {
+        String sql = "update competition set reg_count = ? where competition_id = ?";
+        Object[] param = {count, competitionId};
         return this.executeUpdate(sql, param);
     }
 
@@ -104,7 +109,7 @@ public class CompetitionDao extends BaseDao {
     public int getNewestId() {
         // 获取当前最新的competition_id
         return this.executeQuery(int.class,
-                "select competition_id from game order by competition_id desc",
+                "select competition_id from competition order by competition_id desc",
                 null).stream().findFirst().orElse(0) + 1;
     }
 }

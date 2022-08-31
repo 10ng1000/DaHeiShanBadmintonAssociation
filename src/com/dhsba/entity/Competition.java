@@ -116,6 +116,7 @@ public class Competition implements CompetitionService, Comparable<Competition>,
             competitionDao.createParticipantRecord((String) participant.getAccountNumber(), competitionId);
         }
         registerCount++;
+        competitionDao.updateRegisterCount(competitionId, registerCount);
     }
 
     @Override
@@ -154,8 +155,8 @@ public class Competition implements CompetitionService, Comparable<Competition>,
      */
     @Override
     public void endCompetition() {
-        competitionDao.createCompetitionRecord(type.toString(), registerCount, registerMax, startTime, competitionId);
         for (Participant participant : participants) {
+            participant.addWinCount();
             if (type.isSingle()) ((Athlete) participant.getAthlete()).setInCompetition(false);
             else {
                 ((Pair<Athlete, Athlete>) participant.getAthlete()).getLeft().setInCompetition(false);
@@ -204,6 +205,9 @@ public class Competition implements CompetitionService, Comparable<Competition>,
     class CompetitionTimerTask extends TimerTask {
         public void run() {
             arrangeGames();
+            for (Participant participant : participants) {
+                participant.addCompetitionCount();
+            }
         }
     }
 }

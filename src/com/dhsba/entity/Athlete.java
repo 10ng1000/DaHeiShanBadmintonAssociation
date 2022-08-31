@@ -173,6 +173,7 @@ public class Athlete implements AthleteService, ShowAble {
     public boolean changePassword(String oldPassword, String newPassword) {
         if (oldPassword.equals(account.getPassword())) {
             account.changePassWord(newPassword);
+            return true;
         }
         return false;
     }
@@ -237,5 +238,11 @@ public class Athlete implements AthleteService, ShowAble {
         return account.getAccountNumber();
     }
 
+    public void addWinCount() {
+        winCount++;
+    }
 
+    public void addCompetitionCount() {
+        competitionCount++;
+    }
 }

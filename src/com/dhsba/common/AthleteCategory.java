@@ -9,4 +9,12 @@ public enum AthleteCategory {
     public boolean isSingle() {
         return this == manSingle || this == womanSingle;
     }
+
+    public static String allToString() {
+        return manSingle + "," +
+                womanSingle + "," +
+                menDouble + "," +
+                womenDouble + ","
+                + mixedDouble;
+    }
 }
