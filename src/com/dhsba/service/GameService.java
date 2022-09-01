@@ -1,6 +1,5 @@
 package com.dhsba.service;
 
-import com.dhsba.entity.Participant;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -16,12 +15,12 @@ public interface GameService {
      * @param newPoint 本场比分，按照显示的运动员顺序填写比分
      * @return 比赛是否结束
      */
-    boolean changePoint(Pair<Integer, Integer> newPoint);
+    boolean changePoint(int competitionId, Pair<Integer, Integer> newPoint);
 
     /**
      * 保存对局到数据库
      *
      * @return
      */
-    boolean saveGame(int competitionId, Participant athleteA, Participant athleteB);
+    boolean saveGamePoint(int competitionId);
 }

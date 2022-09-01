@@ -16,18 +16,21 @@ import java.util.ArrayList;
  */
 public abstract class Game implements GameService, Comparable<Game>, ShowAble {
     public static final int WIN_POINT = 21;
-    GameDao gameDao = new GameDao();
+    static GameDao gameDao = new GameDao();
+    int gameId;
     Round round;
     Object athleteA;
     Object athleteB;
-    ArrayList<Pair<Integer, Integer>> points = null;
+    Object aNumber;
+    Object bNumber;
+    ArrayList<Pair<Integer, Integer>> points;
     int aWins;
     int bWins;
     Object winner;
+    Object winnerNumber;
 
     /**
      * 创建新的对局
-     *
      * @param round
      * @param athleteA
      * @param athleteB
@@ -36,21 +39,25 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
         this.round = round;
         this.athleteA = athleteA;
         this.athleteB = athleteB;
+        this.gameId = gameDao.getNewestGameId();
+        this.points = new ArrayList<>();
     }
 
     /**
      * 创建已经完成的对局
+     *
      * @param round
      * @param athleteA
      * @param athleteB
      * @param points
      */
-    public Game(Round round, Object athleteA, Object athleteB,
+    public Game(int gameId, Round round, Object athleteA, Object athleteB,
                 ArrayList<Pair<Integer, Integer>> points) {
         this.round = round;
         this.athleteA = athleteA;
         this.athleteB = athleteB;
         this.points = points;
+        this.gameId = gameId;
         for (Pair<Integer, Integer> point : this.points) {
             if (point.getLeft() == WIN_POINT) aWins++;
             if (point.getRight() == WIN_POINT) bWins++;
@@ -61,18 +68,28 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
 
     /**
      * 创建没有进行的对局
+     *
      * @param type     比赛类型：如单打或是双打
      * @param round    轮数
-     * @param athleteA 如果是单打，则为字符串类型；如果是双打，则为Pair<String, String>类型
+     * @param athleteA 如果是单打，则为Athlete类型；如果是双打，则为Pair<Athlete, Athlete>类型
      * @param athleteB 同A
      * @return
      */
-    public static Game createGame(String type, Round round, Object athleteA, Object athleteB) {
-        if (AthleteCategory.valueOf("type") == AthleteCategory.manSingle
-                || AthleteCategory.valueOf("type") == AthleteCategory.womanSingle) {
-            return new SingleGame(round, (String) athleteA, (String) athleteB);
+    public static Game createGame(int competitionId, String type, Round round, Object athleteA, Object athleteB) {
+        if (AthleteCategory.valueOf(type) == AthleteCategory.manSingle
+                || AthleteCategory.valueOf(type) == AthleteCategory.womanSingle) {
+            return new SingleGame(competitionId, round, ((Athlete) athleteA).getName(), ((Athlete) athleteB).getName(),
+                    ((Athlete) athleteA).getAccountNumber(), ((Athlete) athleteB).getAccountNumber());
         } else {
-            return new DoubleGame(round, (Pair<String, String>) athleteA, (Pair<String, String>) athleteB);
+            return new DoubleGame(competitionId, round,
+                    Pair.of((((Pair<Athlete, Athlete>) athleteA).getLeft()).getName(),
+                            (((Pair<Athlete, Athlete>) athleteA).getRight()).getName()),
+                    Pair.of((((Pair<Athlete, Athlete>) athleteB).getLeft()).getName(),
+                            (((Pair<Athlete, Athlete>) athleteB).getRight()).getName()),
+                    Pair.of((((Pair<Athlete, Athlete>) athleteA).getLeft()).getAccountNumber(),
+                            (((Pair<Athlete, Athlete>) athleteA).getRight()).getAccountNumber()),
+                    Pair.of((((Pair<Athlete, Athlete>) athleteB).getLeft()).getAccountNumber(),
+                            (((Pair<Athlete, Athlete>) athleteB).getRight()).getAccountNumber()));
         }
     }
 
@@ -90,15 +107,19 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
     }
 
     @Override
-    public boolean changePoint(Pair<Integer, Integer> newPoint) {
+    public boolean changePoint(int competitionId, Pair<Integer, Integer> newPoint) {
         points.add(newPoint);
         if (newPoint.getLeft() == WIN_POINT) aWins++;
         else if (newPoint.getRight() == WIN_POINT) bWins++;
         if (aWins == 2) {
             winner = athleteA;
+            winnerNumber = aNumber;
+            saveGamePoint(competitionId);
             return true;
         } else if (bWins == 2) {
             winner = athleteB;
+            winnerNumber = bNumber;
+            saveGamePoint(competitionId);
             return true;
         }
         return false;
@@ -129,5 +150,9 @@ public abstract class Game implements GameService, Comparable<Game>, ShowAble {
     }
 
     @Override
-    public abstract boolean saveGame(int competitionId, Participant athleteA, Participant athleteB);
+    public abstract boolean saveGamePoint(int competitionId);
+
+    public Object getWinnerNumber() {
+        return winnerNumber;
+    }
 }

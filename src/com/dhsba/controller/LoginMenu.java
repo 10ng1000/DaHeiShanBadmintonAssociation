@@ -79,11 +79,7 @@ public class LoginMenu {
             return;
         }
         AthleteDao athleteDao = new AthleteDao();
-        athleteDao.createAthlete(number, name, gender);
-        athleteDao.updateLevel(number, level);
-        athleteDao.updateCategory(number, athleteCategory.toString());
-        athleteDao.updateWinCount(number, 0);
-        athleteDao.updateCompetitionCount(number, 0);
+        athleteDao.createAthlete(number, name, gender, athleteCategory.toString(), level, 0, 0);
         System.out.println("成功注册");
     }
 }

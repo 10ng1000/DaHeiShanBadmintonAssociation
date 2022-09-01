@@ -23,7 +23,6 @@ public class Participant {
 
     /**
      * 返回运动员
-     *
      * @return 如果是单打运动员则返回一个Athlete， 如果是双打运动员则返回一个Pair<Athlete, Athlete>
      */
     public Object getAthlete() {
@@ -32,7 +31,6 @@ public class Participant {
 
     /**
      * 返回运动员账号
-     *
      * @return 如果是单打运动员则返回String， 如果是双打运动员则返回Pair<String, String>
      */
     public Object getAccountNumber() {
@@ -42,6 +40,21 @@ public class Participant {
         } else {
             Pair<Athlete, Athlete> athlete = (Pair<Athlete, Athlete>) this.athlete;
             return Pair.of(athlete.getLeft().getAccountNumber(), athlete.getRight().getAccountNumber());
+        }
+    }
+
+    /**
+     * 返回运动员姓名
+     *
+     * @return 如果是单打运动员则返回String， 如果是双打运动员则返回Pair<String, String>
+     */
+    public Object getAthleteName() {
+        if (athleteCategory.isSingle()) {
+            Athlete athlete = ((Athlete) this.athlete);
+            return athlete.getName();
+        } else {
+            Pair<Athlete, Athlete> athlete = (Pair<Athlete, Athlete>) this.athlete;
+            return Pair.of(athlete.getLeft().getName(), athlete.getRight().getName());
         }
     }
 

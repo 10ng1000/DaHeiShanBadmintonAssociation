@@ -2,6 +2,8 @@ package com.dhsba.service;
 
 import com.dhsba.entity.Participant;
 
+import java.util.ArrayList;
+
 /**
  * 功能：
  * 显示所有比赛日程
@@ -21,7 +23,7 @@ public interface CompetitionService {
      * 只有选手是偶数时可以开始比赛
      * 普通的晋级赛机制，没有种子选手等等
      */
-    void arrangeGames();
+    void arrangeGames(ArrayList<Participant> participantArrayList, int count);
 
     /**
      * 是否能够支持运动员继续参加比赛

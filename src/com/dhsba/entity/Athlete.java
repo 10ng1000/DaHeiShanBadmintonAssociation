@@ -116,7 +116,6 @@ public class Athlete implements AthleteService, ShowAble {
         System.out.println("3. 类别：" + athleteCategory);
         System.out.println("4. 等级：" + level);
         System.out.println("5. 总场数：" + competitionCount);
-        System.out.println("6. 胜场：" + winCount);
     }
 
     @Override
@@ -144,12 +143,13 @@ public class Athlete implements AthleteService, ShowAble {
 
     @Override
     public boolean SignUpCompetition(Competition competition) {
-        if (!competition.canParticipate() || athleteCategory != competition.getType() || isInCompetition) {
+        if (!competition.canParticipate() || athleteCategory != competition.getType() || isInCompetition ||
+                competitions.contains(competition)) {
             return false;
         } else {
             competitions.add(competition);
             isInCompetition = true;
-            if (pair_number != null) competition.addParticipant(new Participant(this));
+            if (pair_number == null) competition.addParticipant(new Participant(this));
             else competition.addParticipant(new Participant(Pair.of(this, loadAthlete(pair_number))));
             return true;
         }
@@ -181,7 +181,7 @@ public class Athlete implements AthleteService, ShowAble {
     public boolean reserveCourt(int number, CourtState futureState) {
         CourtManager courtManager = CourtManager.getInstance();
         Court court = courtManager.getCourt(number);
-        if (court.reserveCourt(futureState)) {
+        if (court.reserveCourt(futureState) && reservingCourt == null) {
             reservingCourt = court;
             return true;
         }
@@ -240,9 +240,20 @@ public class Athlete implements AthleteService, ShowAble {
 
     public void addWinCount() {
         winCount++;
+        athleteDao.updateWinCount(account.getAccountNumber(), winCount);
     }
 
     public void addCompetitionCount() {
         competitionCount++;
+        athleteDao.updateWinCount(account.getAccountNumber(), competitionCount);
+    }
+
+    public String getCompetitions() {
+        String ret = "";
+        for (Competition competition : competitions) {
+            ret += competition.toString();
+            ret += '\n';
+        }
+        return ret;
     }
 }

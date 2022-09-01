@@ -16,14 +16,17 @@ public class AthleteDao extends BaseDao{
 
     /**
      * 向数据库写入运动员基础信息，由account_number唯一决定
+     *
      * @param accountNumber
      * @param name
      * @param gender
      * @return
      */
-    public int createAthlete(String accountNumber, String name, String gender) {
-        String sql = "insert into athlete (account_number, name, gender) values (?, ?, ?)";
-        Object[] param = {accountNumber, name, gender};
+    public int createAthlete(String accountNumber, String name, String gender, String category, int level,
+                             int winCount, int competitionCount) {
+        String sql = "insert into athlete (account_number, name, gender, category," +
+                " level, win_count, competition_count) values (?, ?, ?, ?, ?, ?, ?)";
+        Object[] param = {accountNumber, name, gender, category, level, winCount, competitionCount};
         return this.executeUpdate(sql, param);
     }
 
@@ -81,5 +84,19 @@ public class AthleteDao extends BaseDao{
         String sql = "delete from athlete_in_competition where athlete_number = ? and competition_id = ?";
         Object[] param = {accountNumber, oldValue};
         return this.executeUpdate(sql, param);
+    }
+
+    /**
+     * 同时更新双方的pair
+     *
+     * @param accountNumber
+     * @param pairNumber
+     * @return
+     */
+    public int updatePair(String accountNumber, String pairNumber) {
+        String sql = "update athlete set pair = ? where account_number = ?";
+        Object[] param = {pairNumber, accountNumber};
+        Object[] param2 = {accountNumber, pairNumber};
+        return this.executeUpdate(sql, param) + this.executeUpdate(sql, param2);
     }
 }

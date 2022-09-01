@@ -4,6 +4,8 @@ import com.dhsba.common.AthleteCategory;
 import com.dhsba.entity.Competition;
 import com.dhsba.entity.Game;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,7 +16,6 @@ public class CompetitionDao extends BaseDao {
 
     /**
      * 初步记录比赛
-     *
      * @param category
      * @param regMax
      * @param startTime
@@ -36,7 +37,6 @@ public class CompetitionDao extends BaseDao {
 
     /**
      * 创建比赛记录
-     *
      * @param accountNumber
      * @param competitionId
      * @return
@@ -70,9 +70,14 @@ public class CompetitionDao extends BaseDao {
             } else {
                 games.addAll(gameDao.getDoubleGames((int) objects.get(i)));
             }
-            competitions.add(new Competition(
-                    AthleteCategory.valueOf((String) objects.get(i + 1)), (Date) objects.get(i + 4),
-                    (int) objects.get(i + 2), (int) objects.get(i + 3), games, (int) objects.get(i)));
+            try {
+                competitions.add(new Competition(
+                        AthleteCategory.valueOf((String) objects.get(i + 1)),
+                        Date.from(((LocalDateTime) objects.get(i + 4)).atZone(ZoneId.systemDefault()).toInstant()),
+                        (int) objects.get(i + 2), (int) objects.get(i + 3), games, (int) objects.get(i)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             games = new ArrayList<>();
         }
         return competitions;
@@ -99,7 +104,8 @@ public class CompetitionDao extends BaseDao {
                 games.addAll(gameDao.getDoubleGames((int) objects.get(i)));
             }
             competitions.add(new Competition(
-                    AthleteCategory.valueOf((String) objects.get(i + 1)), (Date) objects.get(i + 4),
+                    AthleteCategory.valueOf((String) objects.get(i + 1)),
+                    Date.from(((LocalDateTime) objects.get(i + 4)).atZone(ZoneId.systemDefault()).toInstant()),
                     (int) objects.get(i + 2), (int) objects.get(i + 3), games, (int) objects.get(i)));
             games = new ArrayList<>();
         }

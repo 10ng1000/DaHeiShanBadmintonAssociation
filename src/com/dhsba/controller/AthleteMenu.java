@@ -69,6 +69,7 @@ public class AthleteMenu {
             System.out.println("1. 比赛日程");
             System.out.println("2. 预约比赛");
             System.out.println("3. 取消预定");
+            System.out.println("4. 我的比赛");
             next = scanner.nextInt();
             switch (next) {
                 case 1 -> {
@@ -112,6 +113,9 @@ public class AthleteMenu {
                             System.out.println("取消失败，可能是比赛已开始或未报名该比赛");
                         }
                     }
+                }
+                case 4 -> {
+                    System.out.println(athlete.getCompetitions());
                 }
             }
         }

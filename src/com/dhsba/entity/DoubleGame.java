@@ -10,20 +10,22 @@ public class DoubleGame extends Game {
     Pair<String, String> athleteB; //组合B
     Pair<String, String> winner;
 
-    public DoubleGame(Round round, Pair<String, String> athleteA, Pair<String, String> athleteB) {
+    public DoubleGame(int competitionId, Round round, Pair<String, String> athleteA, Pair<String, String> athleteB,
+                      Pair<String, String> aNumber, Pair<String, String> bNumber) {
         super(round, athleteA, athleteB);
+        gameDao.createDoubleGame(competitionId, gameId, aNumber, bNumber, round.toString());
     }
 
-    public DoubleGame(Round round, Pair<String, String> athleteA, Pair<String, String> athleteB,
+    public DoubleGame(int gameId, Round round, Pair<String, String> athleteA, Pair<String, String> athleteB,
                       ArrayList<Pair<Integer, Integer>> points) {
-        super(round, athleteA, athleteB, points);
+        super(gameId, round, athleteA, athleteB, points);
     }
 
     @Override
-    public boolean saveGame(int competitionId, Participant athleteA, Participant athleteB) {
-        return gameDao.createDoubleGameRecord(competitionId,
-                (Pair<String, String>) athleteA.getAccountNumber(),
-                (Pair<String, String>) athleteB.getAccountNumber(),
-                points, round.toString()) >= 1;
+    public boolean saveGamePoint(int competitionId) {
+        return gameDao.createDoubleGamePoint(competitionId, gameId,
+                (Pair<String, String>) aNumber,
+                (Pair<String, String>) bNumber,
+                points) >= 1;
     }
 }

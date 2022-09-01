@@ -40,25 +40,9 @@ ADD CONSTRAINT `account_number`
       <console name="Connection 1" type="STANDARD" schema="" session="Main" />
     </connection>
     <connection id="560e6c78-a0f0-4b4b-a431-c206a902d23e">
-      <console name="Connection 2" type="STANDARD" schema="mydb" session="Main"><![CDATA[select t1.game_round, t1.game_id, na1, na2, nb1, nb2, t1.a_point, t3.b_point from 
-(select game_round, name na1, game_id, a_point, game_num
- from double_game natural join double_game_point join athlete on athlete_a1_num = account_number) as t1 
-join
-(select game_round, name na2, game_id, b_point, game_num
- from double_game natural join double_game_point join athlete on athlete_a2_num = account_number) as t2
-on t1.game_id = t2.game_id and t1.game_num = t2.game_num
-join 
-(select game_round, name nb1, game_id, b_point, game_num
- from double_game natural join double_game_point join athlete on athlete_b1_num = account_number) as t3
- on t2.game_id = t3.game_id and t2.game_num = t3.game_num
-join 
-(select game_round, name nb2, game_id, b_point, game_num
- from double_game natural join double_game_point join athlete on athlete_b2_num = account_number) as t4
-on t3.game_id = t4.game_id and t3.game_num = t4.game_num
+      <console name="Connection 2" type="STANDARD" schema="mydb" session="Main"><![CDATA[select * from athlete;
 
-select * from game_point natural join single_game
-
-
+delete from account where number in ('123' , '1234' , '12345', '678' ,'6789' ,'789' ,'7890');
 
 delete from account where number = 1;
 

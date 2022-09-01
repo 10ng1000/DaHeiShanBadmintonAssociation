@@ -10,19 +10,20 @@ public class SingleGame extends Game {
     String athleteB;
     String winner;
 
-    public SingleGame(Round round, String athleteA, String athleteB) {
+    public SingleGame(int competitionId, Round round, String athleteA, String athleteB, String aNumber, String bNumber) {
         super(round, athleteA, athleteB);
+        gameDao.createSingleGame(competitionId, gameId, aNumber, bNumber, round.toString());
     }
 
-    public SingleGame(Round round, String athleteA, String athleteB,
+    public SingleGame(int gameId, Round round, String athleteA, String athleteB,
                       ArrayList<Pair<Integer, Integer>> points) {
-        super(round, athleteA, athleteB, points);
+        super(gameId, round, athleteA, athleteB, points);
     }
 
     @Override
-    public boolean saveGame(int competitionId, Participant athleteA, Participant athleteB) {
-        return gameDao.createSingleGameRecord(competitionId,
-                (String) athleteA.getAccountNumber(), (String) athleteB.getAccountNumber()
-                , points, round.toString()) >= 1;
+    public boolean saveGamePoint(int competitionId) {
+        return gameDao.createSingleGamePoint(competitionId, gameId,
+                (String) aNumber, (String) bNumber
+                , points) >= 1;
     }
 }

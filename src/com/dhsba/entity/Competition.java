@@ -26,7 +26,6 @@ public class Competition implements CompetitionService, Comparable<Competition>,
 
     /**
      * 管理员创建比赛
-     *
      * @param type
      * @param startTime
      * @param registerMax
@@ -36,6 +35,8 @@ public class Competition implements CompetitionService, Comparable<Competition>,
         this.startTime = startTime;
         this.registerMax = registerMax;
         this.competitionId = competitionDao.getNewestId();
+        this.games = new ArrayList<>();
+        this.participants = new ArrayList<>();
         Timer timer = new Timer();
         CompetitionTimerTask timerTask = new CompetitionTimerTask();
         timer.schedule(timerTask, startTime);
@@ -43,7 +44,6 @@ public class Competition implements CompetitionService, Comparable<Competition>,
 
     /**
      * 从数据库里读取比赛
-     *
      * @param type
      * @param startTime
      * @param registerCount
@@ -59,6 +59,11 @@ public class Competition implements CompetitionService, Comparable<Competition>,
         this.registerMax = registerMax;
         this.games = games;
         this.competitionId = competitionId;
+        this.participants = new ArrayList<>();
+        if (isStart()) return;
+        Timer timer = new Timer();
+        CompetitionTimerTask timerTask = new CompetitionTimerTask();
+        timer.schedule(timerTask, startTime);
     }
 
     /**
@@ -86,7 +91,12 @@ public class Competition implements CompetitionService, Comparable<Competition>,
 
     @Override
     public void showGameInfo() {
+        if (!isStart()) {
+            System.out.println("比赛还未开始");
+            return;
+        }
         System.out.println("赛程信息");
+        System.out.println();
         System.out.println("---16强---");
         for (Game game : games) {
             if (game.getRound() == Round.elimination) game.showInfo();
@@ -120,16 +130,18 @@ public class Competition implements CompetitionService, Comparable<Competition>,
     }
 
     @Override
-    public void arrangeGames() {
-        Collections.shuffle(participants);
+    public void arrangeGames(ArrayList<Participant> participantArrayList, int count) {
+        Collections.shuffle(participantArrayList);
         Round round = Round.elimination;
-        if (registerCount > 8 && registerCount <= 16) round = Round.elimination;
-        else if (registerCount > 4 && registerCount <= 8) round = Round.quarterFinal;
-        else if (registerCount > 2 && registerCount <= 4) round = Round.semiFinal;
-        else if (registerCount == 2) round = Round.Final;
-        for (int i = 0; i < registerCount; i += 2)
-            Game.createGame(
-                    type.toString(), round, participants.get(i), participants.get(i + 1));
+        if (count > 8 && count <= 16) round = Round.elimination;
+        else if (count > 4 && count <= 8) round = Round.quarterFinal;
+        else if (count > 2 && count <= 4) round = Round.semiFinal;
+        else if (count == 2) round = Round.Final;
+        for (int i = 0; i < count; i += 2) {
+            games.add(Game.createGame(competitionId,
+                    type.toString(), round, participantArrayList.get(i).getAthlete()
+                    , participantArrayList.get(i + 1).getAthlete()));
+        }
     }
 
     @Override
@@ -156,7 +168,7 @@ public class Competition implements CompetitionService, Comparable<Competition>,
     @Override
     public void endCompetition() {
         for (Participant participant : participants) {
-            participant.addWinCount();
+            participant.addCompetitionCount();
             if (type.isSingle()) ((Athlete) participant.getAthlete()).setInCompetition(false);
             else {
                 ((Pair<Athlete, Athlete>) participant.getAthlete()).getLeft().setInCompetition(false);
@@ -168,7 +180,7 @@ public class Competition implements CompetitionService, Comparable<Competition>,
 
     @Override
     public boolean canParticipate() {
-        return registerCount < registerMax && startTime.after(new Date(System.currentTimeMillis()));
+        return registerCount < registerMax && !isStart();
     }
 
     public int getCompetitionId() {
@@ -202,12 +214,21 @@ public class Competition implements CompetitionService, Comparable<Competition>,
         return games;
     }
 
+    public boolean isStart() {
+        return startTime.before(new Date(System.currentTimeMillis()));
+    }
+
+    public ArrayList<Participant> getParticipants() {
+        return participants;
+    }
+
     class CompetitionTimerTask extends TimerTask {
         public void run() {
-            arrangeGames();
+            arrangeGames(participants, registerCount);
             for (Participant participant : participants) {
                 participant.addCompetitionCount();
             }
         }
     }
 }
+
